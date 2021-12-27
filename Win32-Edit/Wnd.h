@@ -20,7 +20,6 @@ public:
 	std::string lpClass;
 	std::string lpText;
 	DWORD style;
-	UINT id = 0;
 	struct {
 		int x, y, cx, cy;
 	}geo;

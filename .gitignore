@@ -1,0 +1,13 @@
+
+*.db
+*.opendb
+*.ipch
+*.obj
+*.pdb
+*.idb
+*.log
+*.tlog
+*.ilk
+*.exe
+.vs/Win32-Native/v15/.suo
+*.lib

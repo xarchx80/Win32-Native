@@ -53,7 +53,7 @@ bool Wnd::Create()
 		lpText.c_str(),
 		style,
 		geo.x, geo.y, geo.cx, geo.cy,
-		parent_hwnd, (HMENU)id, wc.hInstance, this);
+		parent_hwnd, (HMENU)NULL, wc.hInstance, this);
 
 	if (!m_hwnd) {
 		return false;
@@ -104,9 +104,9 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		//LOG("%s notify", GetText());
 		HWND child_hwnd = ((LPNMHDR)lp)->hwndFrom;
 		Wnd* child = (Wnd*)GetWindowLongPtr(child_hwnd, GWL_USERDATA);
-		//if (child) {
-		//	LOG("%s child notify", child->GetText());
-		//}
+		if (child) {
+			LOG("%s child notify", child->GetText());
+		}
 		break;
 	}
 	case WM_PRINTCLIENT:
@@ -122,14 +122,9 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			if (child->DrawItemEvent(dis))
 				return TRUE;
 		}
+		
 		break;
 	}
-	case WM_NCCALCSIZE: 
-	{
-		NCCALCSIZE_PARAMS* np = (NCCALCSIZE_PARAMS*)lp;
-		LOG("%s nccsize", GetText());
-	}
-	break;
 	}
 	if (is_control) {
 		return DefSubclassProc(hwnd, msg, wp, lp);

@@ -3,8 +3,9 @@
 #include <Control.h>
 #include <Application.h>
 
+#pragma comment(lib,"Win32-Native.lib")
 
-
+#include <Label.h>
 
 int main(int args, char* argv[])
 {
@@ -24,10 +25,10 @@ int main(int args, char* argv[])
 	status.style = WS_VISIBLE | WS_BORDER;
 	status.Create();
 
+	Label label(&window, 320, 100, 200, 200, "About Label");
 
-	
 	//Log::log_message("hello");
-	//throw std::runtime_error("vaild");
+	
 	
 	return app.Exec();
 }

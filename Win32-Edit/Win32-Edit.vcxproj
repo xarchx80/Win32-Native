@@ -20,13 +20,13 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{0956DFEB-85E0-419B-BC98-06CFBDBD499E}</ProjectGuid>
-    <RootNamespace>Win32Native</RootNamespace>
+    <ProjectGuid>{26f5ea23-061e-40b9-935e-dafaa0cfe620}</ProjectGuid>
+    <RootNamespace>Win32_Edit</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -129,7 +129,6 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Control.h" />
-    <ClInclude Include="Painter.h" />
     <ClInclude Include="PCH.h" />
     <ClInclude Include="Wnd.h" />
   </ItemGroup>
@@ -137,7 +136,6 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Painter.cpp" />
     <ClCompile Include="PCH.cpp" />
     <ClCompile Include="Wnd.cpp" />
   </ItemGroup>

@@ -4,8 +4,6 @@
 #include <Application.h>
 
 
-
-
 int main(int args, char* argv[])
 {
 	Application app;
@@ -24,10 +22,8 @@ int main(int args, char* argv[])
 	status.style = WS_VISIBLE | WS_BORDER;
 	status.Create();
 
-
-	
 	//Log::log_message("hello");
-	//throw std::runtime_error("vaild");
+	
 	
 	return app.Exec();
 }
