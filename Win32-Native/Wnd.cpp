@@ -15,6 +15,7 @@ Wnd::Wnd(Wnd* parent, int x, int y, int w, int h, const TCHAR* text)
 
 Wnd::~Wnd()
 {
+	SAFE_DELETE_WND(m_hwnd);
 }
 
 

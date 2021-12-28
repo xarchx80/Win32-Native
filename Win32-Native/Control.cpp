@@ -9,6 +9,7 @@ Control::Control(Wnd* parent)
 Control::Control(Wnd* parent, int x, int y, int w, int h, const char* text)
 	: Wnd(parent, x, y, w, h, text)
 {
+	
 }
 
 bool Control::Create()

@@ -2,7 +2,7 @@
 #include <Wnd.h>
 #include <Control.h>
 #include <Application.h>
-
+#include <StatusBar.h>
 
 
 
@@ -19,11 +19,11 @@ int main(int args, char* argv[])
 	button.style = WS_VISIBLE | BS_PUSHBUTTON;
 	button.Create();
 
-	Control status(&window, 100, -200, 100, 10, "status");
-	status.lpClass = STATUSCLASSNAME;
-	status.style = WS_VISIBLE | WS_BORDER;
-	status.Create();
-
+	//Control status(&window, 100, -200, 100, 10, "status");
+	//status.lpClass = STATUSCLASSNAME;
+	//status.style = WS_VISIBLE | WS_BORDER |CCS_BOTTOM;
+	//status.Create();
+	StatusBar s(&window);
 
 	
 	//Log::log_message("hello");

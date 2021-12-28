@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{26f5ea23-061e-40b9-935e-dafaa0cfe620}</ProjectGuid>
-    <RootNamespace>Win32_Edit</RootNamespace>
+    <ProjectGuid>{1143eadb-e6bc-46f4-95a7-25e91b774245}</ProjectGuid>
+    <RootNamespace>UnitTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -128,16 +128,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Control.h" />
     <ClInclude Include="PCH.h" />
-    <ClInclude Include="Wnd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Control.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PCH.cpp" />
-    <ClCompile Include="Wnd.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

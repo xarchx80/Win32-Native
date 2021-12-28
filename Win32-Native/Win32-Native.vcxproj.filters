@@ -5,6 +5,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Gui">
+      <UniqueIdentifier>{8f468910-2a9f-4ed1-b29b-58f1bdcf4a87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Wnd.h">
@@ -21,6 +24,9 @@
     </ClInclude>
     <ClInclude Include="Painter.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StatusBar.h">
+      <Filter>Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="Painter.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StatusBar.cpp">
+      <Filter>Gui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
