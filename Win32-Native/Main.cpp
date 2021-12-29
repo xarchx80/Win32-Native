@@ -11,6 +11,7 @@ int main(int args, char* argv[])
 	Application app;
 
 	Wnd window(nullptr, 700, 200, 700, 400,"main window");
+	window.hbrBkgorund = CreateSolidBrush(RGB(35, 40, 44));
 	window.Create();
 	window.Show();
 

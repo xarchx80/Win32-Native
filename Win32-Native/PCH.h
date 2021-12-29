@@ -20,6 +20,10 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <stdio.h>
 #include <stdlib.h>
 
+#define WLM_ERASEBG
+#define OVERRIDE		override
+#define FORCEINLINE		__forceinline
+
 #define SAFE_DELETE_GDIOBJ(x)	if(x) { ::DeleteObject(x); x = NULL;}
 #define SAFE_DELETE_WND(x)		if(x) { ::DestroyWindow(x); x = NULL;}
 
@@ -61,3 +65,11 @@ namespace Log
 	}
 
 }
+
+struct Event
+{
+	//HWND hwnd;
+	UINT msg;
+	WPARAM wp;
+	LPARAM lp;
+};

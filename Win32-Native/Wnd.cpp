@@ -15,6 +15,7 @@ Wnd::Wnd(Wnd* parent, int x, int y, int w, int h, const TCHAR* text)
 
 Wnd::~Wnd()
 {
+	SAFE_DELETE_GDIOBJ(hbrBkgorund);
 	SAFE_DELETE_WND(m_hwnd);
 }
 
@@ -24,7 +25,7 @@ bool Wnd::Create()
 {
 	WNDCLASSEX wc{};
 	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
+	wc.hbrBackground = hbrBkgorund ?  hbrBkgorund :(HBRUSH)GetStockObject(GRAY_BRUSH);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hInstance = GetModuleHandle(NULL);
 	wc.lpszClassName = lpClass.c_str();
@@ -72,14 +73,29 @@ const char* Wnd::GetText() const
 	return lpText.c_str();
 }
 
+LRESULT Wnd::NotifyEvent(Event & e)
+{
+	return FALSE;
+}
+
+LRESULT Wnd::NotifyReflectEvent(Event & e)
+{
+	return FALSE;
+}
+
 LRESULT Wnd::DrawItemEvent(DRAWITEMSTRUCT* dis)
+{
+	return FALSE;
+}
+
+LRESULT Wnd::EraseBkgndEvent(Event &e)
 {
 	return FALSE;
 }
 
 LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
-
+	Event evt{ msg, wp, lp };
 	switch (msg)
 	{
 	case WM_SIZE:
@@ -105,9 +121,13 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		//LOG("%s notify", GetText());
 		HWND child_hwnd = ((LPNMHDR)lp)->hwndFrom;
 		Wnd* child = (Wnd*)GetWindowLongPtr(child_hwnd, GWL_USERDATA);
-		//if (child) {
-		//	LOG("%s child notify", child->GetText());
-		//}
+		BOOL res = FALSE;
+		if (child) {
+			res = child->NotifyReflectEvent(evt);
+			if (res) return res;
+		}
+		res = NotifyEvent(evt);
+		if (res) return res;
 		break;
 	}
 	case WM_PRINTCLIENT:
@@ -129,6 +149,13 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	{
 		NCCALCSIZE_PARAMS* np = (NCCALCSIZE_PARAMS*)lp;
 		LOG("%s nccsize", GetText());
+	}
+	break;
+	case WM_ERASEBKGND:
+	{
+		LOG("%s erase", GetText());
+		if (EraseBkgndEvent(evt))
+			return TRUE;
 	}
 	break;
 	}

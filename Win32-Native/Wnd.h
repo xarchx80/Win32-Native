@@ -11,7 +11,10 @@ public:
 	virtual bool Create();
 	void Show();
 	const char* GetText() const;
+	virtual LRESULT NotifyEvent(Event &e);
+	virtual LRESULT NotifyReflectEvent(Event &e);
 	virtual LRESULT DrawItemEvent(DRAWITEMSTRUCT* dis);
+	virtual LRESULT EraseBkgndEvent(Event &e);
 	virtual LRESULT LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 	static LRESULT WINAPI GlobalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 
@@ -25,5 +28,6 @@ public:
 		int x, y, cx, cy;
 	}geo;
 	bool is_control = false;
+	HBRUSH hbrBkgorund = nullptr;
 };
 
