@@ -28,6 +28,9 @@
     <ClInclude Include="StatusBar.h">
       <Filter>Gui</Filter>
     </ClInclude>
+    <ClInclude Include="TabControl.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Wnd.cpp">
@@ -49,6 +52,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StatusBar.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="TabControl.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
   </ItemGroup>

@@ -132,6 +132,7 @@
     <ClInclude Include="Painter.h" />
     <ClInclude Include="PCH.h" />
     <ClInclude Include="StatusBar.h" />
+    <ClInclude Include="TabControl.h" />
     <ClInclude Include="Wnd.h" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +142,7 @@
     <ClCompile Include="Painter.cpp" />
     <ClCompile Include="PCH.cpp" />
     <ClCompile Include="StatusBar.cpp" />
+    <ClCompile Include="TabControl.cpp" />
     <ClCompile Include="Wnd.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

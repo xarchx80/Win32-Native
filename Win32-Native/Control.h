@@ -2,16 +2,31 @@
 
 #include <Wnd.h>
 
-class Control : public Wnd
+class SubClassControl : public Wnd
 {
 public:
-	Control(Wnd* parent);
-	Control(Wnd* parent, int x, int y, int w, int h, const char* text);
+	SubClassControl(Wnd* parent);
+	SubClassControl(Wnd* parent, int x, int y, int w, int h, const char* text);
 
 	virtual bool Create() override;
 
 	//virtual LRESULT LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
-	static LRESULT WINAPI GlobalSubWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp,
+	static LRESULT WINAPI SubClassWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp,
 		UINT_PTR id, DWORD_PTR data);
 };
 
+class SuperClassControl : public Wnd
+{
+public:
+	SuperClassControl(Wnd* parent);
+	SuperClassControl(Wnd* parent, int x, int y, int w, int h, const char* text);
+
+	
+	virtual bool SetSuperClass(LPCSTR src, LPCSTR dest) override;
+
+	int m_PreCBWndExtra = 0;
+	WNDPROC m_preWndProc = nullptr;
+	static std::vector<std::string> m_registeredSuperClasses;
+	virtual LRESULT LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	static LRESULT WINAPI SuperClassWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+};

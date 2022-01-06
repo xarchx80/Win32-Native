@@ -21,8 +21,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <stdlib.h>
 
 #define WLM_ERASEBG
+#define WM_PAINT_SUCCESS	0
 #define OVERRIDE		override
-#define FORCEINLINE		__forceinline
 
 #define SAFE_DELETE_GDIOBJ(x)	if(x) { ::DeleteObject(x); x = NULL;}
 #define SAFE_DELETE_WND(x)		if(x) { ::DestroyWindow(x); x = NULL;}
@@ -42,6 +42,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
 typedef TCHAR tchar;
+
+#include <Painter.h>
 
 namespace Log
 {

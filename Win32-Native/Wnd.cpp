@@ -1,14 +1,16 @@
 #include <PCH.h>
 #include "Wnd.h"
 
+//WNDPROC Wnd::mPreWndProc = nullptr;
+
 Wnd::Wnd(Wnd* parent)
-	: m_parent(parent), geo{0},lpClass("Wnd32"), lpText("Wnd32"), style(WS_VISIBLE)
+	: m_parent(parent), geo{ 0 }, lpClass("Wnd32"), lpText("Wnd32"), style(WS_VISIBLE), styleEx(NULL)
 {
 	
 }
 
 Wnd::Wnd(Wnd* parent, int x, int y, int w, int h, const TCHAR* text)
-	: m_parent(parent), geo{ x, y, w, h}, lpClass("Wnd32"), lpText(text), style(WS_VISIBLE)
+	: m_parent(parent), geo{ x, y, w, h }, lpClass("Wnd32"), lpText(text), style(WS_VISIBLE), styleEx(NULL)
 {
 
 }
@@ -31,10 +33,18 @@ bool Wnd::Create()
 	wc.lpszClassName = lpClass.c_str();
 	wc.lpfnWndProc = Wnd::GlobalWndProc;
 	wc.style = CS_VREDRAW | CS_HREDRAW;
-	if (!GetClassInfoEx(wc.hInstance, wc.lpszClassName, &wc)) {
-		if (!RegisterClassEx(&wc)) {
-			assert(0);
+
+	bool exist = GetClassInfoEx(wc.hInstance, wc.lpszClassName, &wc);
+	if (exist) {
+		if (m_IsSupperClass) {
+			assert(!lpSuperClass.empty());
+			SetSuperClass(wc.lpszClassName, lpSuperClass.c_str());
+			//lpClass = lpSuperClass;
 		}
+	}
+	else {
+		if (RegisterClassEx(&wc)) LOG("%s __registered class", wc.lpszClassName);
+		else assert(0);
 	}
 
 	HWND parent_hwnd = nullptr;
@@ -50,8 +60,8 @@ bool Wnd::Create()
 	}
 
 	m_hwnd = CreateWindowEx(
-		NULL,
-		lpClass.c_str(),
+		styleEx,
+		m_IsSupperClass ? lpSuperClass.c_str() : lpClass.c_str(),
 		lpText.c_str(),
 		style,
 		geo.x, geo.y, geo.cx, geo.cy,
@@ -79,6 +89,11 @@ LRESULT Wnd::NotifyEvent(Event & e)
 }
 
 LRESULT Wnd::NotifyReflectEvent(Event & e)
+{
+	return FALSE;
+}
+
+LRESULT Wnd::PaintEvent(Painter &p)
 {
 	return FALSE;
 }
@@ -151,6 +166,17 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		LOG("%s nccsize", GetText());
 	}
 	break;
+	case WM_PAINT:
+	{
+		if (is_control && !is_control_paint_event_enable)
+			break;
+		LOG("%s paint", GetText());
+		Painter p(hwnd);
+		if (PaintEvent(p))
+			return 0;
+		break;
+	}
+	
 	case WM_ERASEBKGND:
 	{
 		LOG("%s erase", GetText());
@@ -158,7 +184,12 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			return TRUE;
 	}
 	break;
+	case WM_NCPAINT:
+		LOG("%s NCPAINT", GetText());
+	break;
 	}
+	//return 0;
+
 	if (is_control) {
 		return DefSubclassProc(hwnd, msg, wp, lp);
 	}
@@ -175,12 +206,45 @@ LRESULT Wnd::GlobalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		LPCREATESTRUCT clp = (LPCREATESTRUCT)lp;
 		wnd = (Wnd*)clp->lpCreateParams;
 		SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG)wnd);
-		return true;
-		break;
+		//return true;
 	}
+	break;
 	}
 	if (wnd)
 		return wnd->LocalWndProc(hwnd, msg, wp, lp);
 
 	return DefWindowProc(hwnd, msg, wp, lp);
 }
+
+bool Wnd::SetSuperClass(LPCSTR src, LPCSTR dest)
+{
+	_CRT_UNUSED(src);
+	_CRT_UNUSED(dest);
+	return false;
+}
+
+bool Wnd::SetSubClass()
+{
+	return false;
+}
+
+bool Wnd::HasStyle(DWORD s)
+{
+	return (style & s);
+}
+
+void Wnd::AddStyle(DWORD s)
+{
+	style |= s;
+}
+
+void Wnd::RemoveStyle(DWORD s)
+{
+	style &= ~s;
+}
+
+bool Wnd::SetParent(HWND parent)
+{
+	return ::SetParent(m_hwnd, parent);
+}
+

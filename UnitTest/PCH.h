@@ -9,8 +9,10 @@
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #pragma comment(lib, "comctl32.lib")
+#pragma comment(lib, "uxtheme.lib")
 
 #include <CommCtrl.h>
+#include <Uxtheme.h>
 
 #include <string>
 #include <assert.h>
@@ -60,4 +62,9 @@ namespace Log
 		MessageBox(NULL, buf, "Error", MB_ICONERROR);
 	}
 
+}
+
+inline void DrawRectangle(HDC dc, const RECT &rc)
+{
+	Rectangle(dc, rc.left, rc.top, rc.right, rc.bottom);
 }

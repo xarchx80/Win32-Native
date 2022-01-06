@@ -3,16 +3,17 @@
 
 
 StatusBar::StatusBar(Wnd * parent)
-	: Control(parent)
+	: SubClassControl(parent)
 {
 	lpClass = STATUSCLASSNAME;
-	style = WS_VISIBLE;//| WS_BORDER | CCS_BOTTOM;
+	style = WS_VISIBLE | WS_CLIPSIBLINGS;//| WS_BORDER | CCS_BOTTOM;
+	styleEx = WS_EX_CLIENTEDGE;
 	hbrBkgorund = CreateSolidBrush(RGB(44, 137, 204));
 	Create();
 	
 	std::vector<StatusBarPart> parts = {
-	{"One", 150, NULL},
-	{"two", 200, NULL },
+	{"One", 150, SBT_OWNERDRAW},
+	{"two", 200, SBT_OWNERDRAW | SBT_NOBORDERS},
 	{"Three", 100, SBT_OWNERDRAW | SBT_NOBORDERS }
 	};
 
@@ -74,33 +75,78 @@ const char* StatusBar::GetPartText(UINT index)
 	return m_parts_text[index];
 }
 
+RECT StatusBar::GetPartRect(UINT index)
+{
+	assert(index <= m_parts_text.size());
+	RECT rc;
+	SendMessage(m_hwnd, SB_GETRECT, index, (LPARAM)&rc);
+	return rc;
+}
+
+RECT StatusBar::GetPartNoThemeRect(UINT index)
+{
+	return RECT();
+}
+
+int StatusBar::GetPartsNum() const
+{
+	return SendMessage(m_hwnd, SB_GETPARTS, 0, 0);
+}
+
+bool StatusBar::GetBorder(int* data)
+{
+	int size[3];
+	bool res = SendMessage(m_hwnd, SB_GETBORDERS, 0, (LPARAM)&size);
+	if (res) {
+		data[0] = size[0];
+		data[1] = size[1];
+		data[2] = size[2];
+	}
+
+	return res;
+}
+
 LRESULT StatusBar::NotifyReflectEvent(Event & e)
 {
 	LOG("%s notify reflect", GetText());
 	return LRESULT();
 }
 
+LRESULT StatusBar::PaintEvent(Painter &p)
+{
+	RECT rc = GetPartRect(0);
+	FillRect(p.dc, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
+	return TRUE;
+}
+
 LRESULT StatusBar::DrawItemEvent(DRAWITEMSTRUCT* dip)
 {
 	
-	if (dip->itemID == 2) {
-		HDC dc = dip->hDC;
-		RECT rc = dip->rcItem;
-		//auto br = CreateSolidBrush(RGB(65,100,100));
-		SetTextColor(dc, RGB(230, 230, 230));
-		SetBkColor(dc, RGB(50, 50, 50));
-		SetBkMode(dc, TRANSPARENT);
-		//SelectObject(dc, hbrBkgorund);
-		FillRect(dc, &rc, hbrBkgorund);
-		int index = dip->itemID;
 
-		const char* code = GetPartText(dip->itemID);
-		int code_len = std::strlen(code);
-		//TextOut(dc, 0, 0, code, code_len);
-
-		DrawText(dc, code, -1, &dip->rcItem, DT_LEFT);
-		//SAFE_DELETE_GDIOBJ(br);
+	HDC dc = dip->hDC;
+	RECT rc = dip->rcItem;
+	int index = dip->itemID;
+	//auto br = CreateSolidBrush(RGB(65,100,100));
+	SetTextColor(dc, RGB(230, 230, 230));
+	SetBkColor(dc, RGB(50, 50, 50));
+	SetBkMode(dc, TRANSPARENT);
+	//SelectObject(dc, hbrBkgorund);
+	if (index == 1) {
+		auto rrc = GetPartRect(index);
+		rrc.left -= 20;
+		rrc.top -= 2;
+		FillRect(dc, &rrc, (HBRUSH)GetStockObject(BLACK_BRUSH));
 	}
+	else
+		FillRect(dc, &rc, hbrBkgorund);
+
+	const char* code = GetPartText(dip->itemID);
+	int code_len = std::strlen(code);
+	//TextOut(dc, 0, 0, code, code_len);
+
+	DrawText(dc, code, -1, &dip->rcItem, DT_LEFT);
+		//SAFE_DELETE_GDIOBJ(br);
+	
 	return true;
 }
 

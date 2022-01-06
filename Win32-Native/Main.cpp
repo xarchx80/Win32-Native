@@ -3,7 +3,7 @@
 #include <Control.h>
 #include <Application.h>
 #include <StatusBar.h>
-
+#include <TabControl.h>
 
 
 int main(int args, char* argv[])
@@ -15,11 +15,34 @@ int main(int args, char* argv[])
 	window.Create();
 	window.Show();
 
-	Control button(&window, 50, 50, 300, 100, "Button1");
-	button.lpClass = "Button";
-	button.style = WS_VISIBLE | BS_PUSHBUTTON;
-	button.Create();
+	//SuperClassControl button(&window, 50, 50, 200, 80, "Button1");
+	//button.lpClass = "Button";
+	//button.lpSuperClass = "Button_Ex";
+	//button.style = WS_VISIBLE | BS_PUSHBUTTON;
+	//button.Create();
 
+	SuperClassControl button1(&window, 250, 50, 200, 80, "Button1");
+	button1.lpClass = "Button";
+	button1.lpSuperClass = "Button_Ex";
+	button1.style = WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT;
+	button1.Create();
+
+	
+	RECT rc;
+	TabControl tab(&window);
+	Wnd* parent = tab.m_parent;
+	GetClientRect(parent->m_hwnd, &rc);
+	rc.bottom -= 28;
+	SetWindowPos(tab.m_hwnd, NULL, 0, 0, rc.right - rc.left, rc.bottom - rc.top, NULL);
+
+	auto a = SuperClassControl::m_registeredSuperClasses;
+
+	
+	std::vector<TabItem> tItems = {
+		{ &button1, "One"},
+		{ nullptr, "Two"}
+	};
+	tab.SetItems(tItems);
 	//Control status(&window, 100, -200, 100, 10, "status");
 	//status.lpClass = STATUSCLASSNAME;
 	//status.style = WS_VISIBLE | WS_BORDER |CCS_BOTTOM;
