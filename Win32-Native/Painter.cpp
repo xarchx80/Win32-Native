@@ -7,6 +7,11 @@ Painter::Painter(HWND hwnd)
 	dc = BeginPaint(hwnd, &ps);
 }
 
+Painter::Painter(HWND hwnd, HDC hdc)
+	: dc(hdc), hwnd(hwnd)
+{
+}
+
 Painter::~Painter()
 {
 	EndPaint(hwnd, &ps);

@@ -34,7 +34,8 @@ int main(int args, char* argv[])
 	HWND window = CreateWindowEx(NULL, "window", "main window", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		400, 200, 700, 400, NULL, NULL,GetModuleHandle(NULL), NULL);
 
-	HWND button = CreateWindowEx(NULL, WC_BUTTON, "button", WS_POPUP  | WS_VISIBLE,
+	HWND button = CreateWindowEx(NULL, WC_BUTTON, "button", WS_POPUP  | WS_VISIBLE
+		| BS_PUSHBUTTON,
 		200, 50, 200, 100, NULL, NULL, GetModuleHandle(NULL), NULL);
 
 	//SetWindowLongPtr(button)
@@ -42,8 +43,8 @@ int main(int args, char* argv[])
 	HWND parent = GetParent(button);
 	auto s = GetText(parent);
 	LOG("%s is parent", s.c_str());
-	//SetWindowLong(button, GWL_STYLE, WS_VISIBLE | WS_CHILD);
-	//SetParent(button, window);
+	SetWindowLong(button, GWL_STYLE, WS_VISIBLE | WS_CHILD);
+	SetParent(button, window);
 	
 
 	ShowWindow(window, TRUE);
@@ -60,6 +61,37 @@ LRESULT WINAPI WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_SIZE:
 		LOG("%s Sizong", GetText(hwnd).c_str());
 		break;
+		//case WM_COMMAND:
+		//{
+		//	HWND child = nullptr;
+		//	child = (HWND)lp;
+		//	if (child) {
+		//		LOG("%s command", GetText(child).c_str());
+		//		if (HIWORD(wp) == BN_CLICKED) {
+		//			LOG("cliked %d", LOWORD(wp));
+		//			ShowWindow(child, FALSE);
+		//		}
+		//		//return TRUE;
+		//	}
+		//		
+		//	LOG("%s command", GetText(hwnd).c_str());
+		//	break;
+		//}
+	case WM_PAINT:
+	{
+		PAINTSTRUCT ps;
+		HDC dc = BeginPaint(hwnd, &ps);
+		RECT r;
+		HBRUSH br;
+		GetClientRect(hwnd, &r);
+		br = (HBRUSH)GetStockObject(BLACK_BRUSH);
+		FillRect(dc, &r, br);
+		static HBRUSH hbr = CreateSolidBrush(RGB(0, 100, 100));
+		r.bottom = 110;
+		FillRect(dc, &r, hbr);
+		EndPaint(hwnd, &ps);
+		break;
+	}
 	case WM_COMMAND:
 	{
 		HWND child = nullptr;
@@ -68,15 +100,15 @@ LRESULT WINAPI WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			LOG("%s command", GetText(child).c_str());
 			if (HIWORD(wp) == BN_CLICKED) {
 				LOG("cliked %d", LOWORD(wp));
+				ShowWindow(child, FALSE);
 			}
 			//return TRUE;
 		}
-			
+
 		LOG("%s command", GetText(hwnd).c_str());
 		break;
 	}
 	}
-	
 	return DefWindowProc(hwnd, msg, wp, lp);
 
 }
@@ -93,6 +125,7 @@ LRESULT WINAPI SubWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR id
 	case WM_COMMAND:
 	{
 		LOG("%s sub command", GetText(hwnd).c_str());
+		ShowWindow(hwnd, SW_HIDE);
 		break;
 	}
 	}

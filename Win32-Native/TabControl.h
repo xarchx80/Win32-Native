@@ -14,12 +14,20 @@ class TabControl : public SuperClassControl
 {
 public:
 	TabControl(Wnd* parent);
+	virtual~TabControl();
 
 	void SetItems(std::vector<TabItem> &items);
-	std::vector<TabItem> mTabItems;
 
 	LRESULT PaintEvent(Painter& p) override;
+	LRESULT NotifyReflectEvent(Event &e) override;
+	void OnResize(SizeEvent& e) override;
 
+	int DeleteAllItems();
+	int DeleteItem(int index);
+
+	
+	std::vector<Wnd*> m_TabWnds;
+	Wnd* m_CurTabWnd = nullptr;
 	LRESULT LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
 };
 

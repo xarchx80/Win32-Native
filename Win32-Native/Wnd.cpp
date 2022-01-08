@@ -98,6 +98,11 @@ LRESULT Wnd::PaintEvent(Painter &p)
 	return FALSE;
 }
 
+void Wnd::OnResize(SizeEvent& e)
+{
+	_CRT_UNUSED(e);
+}
+
 LRESULT Wnd::DrawItemEvent(DRAWITEMSTRUCT* dis)
 {
 	return FALSE;
@@ -114,16 +119,16 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	switch (msg)
 	{
 	case WM_SIZE:
-		LOG("%s sizing", GetText());
+		//LOG("%s sizing", GetText());
 		break;
 
 	case WM_RBUTTONUP:
-		LOG("%s button", GetText());
+		//LOG("%s button", GetText());
 		break;
 
 	case WM_COMMAND:
 	{
-		LOG("%s command", GetText());
+		//LOG("%s command", GetText());
 		Wnd* child = nullptr;
 		child = (Wnd*)GetWindowLongPtr((HWND)lp, GWL_USERDATA);
 		if (child) {
@@ -138,6 +143,7 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		Wnd* child = (Wnd*)GetWindowLongPtr(child_hwnd, GWL_USERDATA);
 		BOOL res = FALSE;
 		if (child) {
+			//LOG("%s notify", child->GetText());
 			res = child->NotifyReflectEvent(evt);
 			if (res) return res;
 		}
@@ -147,7 +153,7 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	}
 	case WM_PRINTCLIENT:
 	{
-		LOG("%s is printclient", GetText());
+		//LOG("%s is printclient", GetText());
 		break;
 	}
 	case WM_DRAWITEM:
@@ -163,7 +169,7 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_NCCALCSIZE: 
 	{
 		NCCALCSIZE_PARAMS* np = (NCCALCSIZE_PARAMS*)lp;
-		LOG("%s nccsize", GetText());
+		//LOG("%s nccsize", GetText());
 	}
 	break;
 	case WM_PAINT:
@@ -179,13 +185,14 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	
 	case WM_ERASEBKGND:
 	{
-		LOG("%s erase", GetText());
+		//LOG("%s erase", GetText());
 		if (EraseBkgndEvent(evt))
 			return TRUE;
+		return FALSE;
 	}
 	break;
 	case WM_NCPAINT:
-		LOG("%s NCPAINT", GetText());
+		//LOG("%s NCPAINT", GetText());
 	break;
 	}
 	//return 0;
@@ -241,6 +248,49 @@ void Wnd::AddStyle(DWORD s)
 void Wnd::RemoveStyle(DWORD s)
 {
 	style &= ~s;
+}
+
+void Wnd::SetStyle(DWORD s)
+{
+	style = s;
+}
+
+void Wnd::SetStyleEx(DWORD s)
+{
+	styleEx = s;
+}
+
+void Wnd::SetClassName(LPCSTR name)
+{
+	lpClass = name;
+}
+
+void Wnd::SetSuperClassName(LPCSTR name)
+{
+	lpSuperClass = name;
+}
+
+void Wnd::SetWindowName(LPCSTR name)
+{
+	lpText = name;
+}
+
+void Wnd::Hide()
+{
+	assert(m_hwnd);
+	ShowWindow(m_hwnd, SW_HIDE);
+}
+
+void Wnd::SetGeometry(const RECT & rc)
+{
+	::SetWindowPos(m_hwnd, NULL, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
+		SWP_NOZORDER);
+}
+
+void Wnd::SetGeometry(const RECT & rc, HWND zorder, UINT flag)
+{
+	::SetWindowPos(m_hwnd, zorder, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
+		flag);
 }
 
 bool Wnd::SetParent(HWND parent)

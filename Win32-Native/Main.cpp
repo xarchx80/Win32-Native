@@ -4,6 +4,7 @@
 #include <Application.h>
 #include <StatusBar.h>
 #include <TabControl.h>
+#include <IButton.h>
 
 
 int main(int args, char* argv[])
@@ -21,12 +22,13 @@ int main(int args, char* argv[])
 	//button.style = WS_VISIBLE | BS_PUSHBUTTON;
 	//button.Create();
 
-	SuperClassControl button1(&window, 250, 50, 200, 80, "Button1");
+	SubClassControl button1(&window, 250, 50, 200, 80, "Button1");
 	button1.lpClass = "Button";
 	button1.lpSuperClass = "Button_Ex";
-	button1.style = WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT;
+	button1.style = WS_VISIBLE ;
 	button1.Create();
 
+	IButton b(nullptr,"long button");
 	
 	RECT rc;
 	TabControl tab(&window);
@@ -39,8 +41,9 @@ int main(int args, char* argv[])
 
 	
 	std::vector<TabItem> tItems = {
-		{ &button1, "One"},
-		{ nullptr, "Two"}
+		{nullptr, "Zero"},
+		{ nullptr, "One"},
+		{ &b, b.GetText()}
 	};
 	tab.SetItems(tItems);
 	//Control status(&window, 100, -200, 100, 10, "status");

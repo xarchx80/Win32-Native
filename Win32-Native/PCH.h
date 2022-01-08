@@ -75,3 +75,10 @@ struct Event
 	WPARAM wp;
 	LPARAM lp;
 };
+
+struct SizeEvent
+{
+	SizeEvent(WPARAM wp, LPARAM lp) : wp(wp), w(LOWORD(lp)), h(HIWORD(lp)){}
+	WPARAM wp;
+	UINT w, h;
+};

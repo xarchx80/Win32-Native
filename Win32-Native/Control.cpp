@@ -13,6 +13,10 @@ SubClassControl::SubClassControl(Wnd* parent, int x, int y, int w, int h, const 
 	m_IsSubClass = true;
 }
 
+SubClassControl::~SubClassControl()
+{
+}
+
 bool SubClassControl::Create()
 {
 	if (!Wnd::Create())
@@ -83,8 +87,10 @@ bool SuperClassControl::SetSuperClass(LPCSTR src, LPCSTR dest)
 	return true;
 }
 
-
-
+WNDPROC SuperClassControl::GetPreWndProc() const
+{
+	return m_preWndProc;
+}
 
 LRESULT SuperClassControl::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {

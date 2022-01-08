@@ -5,6 +5,7 @@ class Painter
 {
 public:
 	Painter(HWND hwnd);
+	Painter(HWND hwnd, HDC hdc);
 	~Painter();
 	bool Release();
 

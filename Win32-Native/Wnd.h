@@ -14,6 +14,7 @@ public:
 	virtual LRESULT NotifyEvent(Event &e);
 	virtual LRESULT NotifyReflectEvent(Event &e);
 	virtual LRESULT PaintEvent(Painter &p);
+	virtual void OnResize(SizeEvent &e);
 	virtual LRESULT DrawItemEvent(DRAWITEMSTRUCT* dis);
 	virtual LRESULT EraseBkgndEvent(Event &e);
 	virtual LRESULT LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
@@ -26,6 +27,16 @@ public:
 	bool HasStyle(DWORD s);
 	void AddStyle(DWORD s);
 	void RemoveStyle(DWORD s);
+	void SetStyle(DWORD s);
+	void SetStyleEx(DWORD s);
+
+	void SetClassName(LPCSTR name);
+	void SetSuperClassName(LPCSTR name);
+	void SetWindowName(LPCSTR name);
+
+	void Hide();
+	void SetGeometry(const RECT& rc);
+	void SetGeometry(const RECT& rc, HWND zorder, UINT flag);
 
 	bool SetParent(HWND parent);
 	Wnd* m_parent;
