@@ -19,7 +19,6 @@ Painter::~Painter()
 
 bool Painter::Release()
 {
-	
 	return true;
 }
 
@@ -31,6 +30,11 @@ void Painter::DrawRect(const RECT &rc, HBRUSH br)
 void Painter::DrawRectangle(const RECT & rc)
 {
 	Rectangle(dc, rc.left, rc.top, rc.right, rc.bottom);
+}
+
+void Painter::DrawCode(LPCSTR code, LPRECT rc,UINT flag)
+{
+	::DrawText(dc, code, strlen(code), rc, flag);
 }
 
 HGDIOBJ Painter::SetObject(HGDIOBJ obj)

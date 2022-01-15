@@ -2,7 +2,7 @@
 #include "Label.h"
 
 Label::Label(Wnd * parent, int x, int y, int w, int h, const char * text)
-	: Control(parent, x, y, w, h, text)
+	: SubClassControl(parent, x, y, w, h, text)
 {
 	lpClass = WC_STATIC;
 	style = WS_VISIBLE | SS_OWNERDRAW;
@@ -10,7 +10,7 @@ Label::Label(Wnd * parent, int x, int y, int w, int h, const char * text)
 	Create();
 }
 
-LRESULT Label::DrawItemEvent(DRAWITEMSTRUCT * dis)
+LRESULT Label::OnDrawItem(DRAWITEMSTRUCT * dis)
 {
 	LOG("draw item : %d ", dis->CtlID);
 	RECT rc = dis->rcItem;
@@ -26,16 +26,19 @@ LRESULT Label::DrawItemEvent(DRAWITEMSTRUCT * dis)
 	return LRESULT();
 }
 
-//LRESULT Label::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
-//{
-//	switch (msg)
-//	{
-//	case WM_DRAWITEM:
-//	{
-//		if(wp == 2)
-//			LOG("static draw");
-//		break;
-//	}
-//	}
-//	return DefSubclassProc(hwnd, msg, wp, lp);
-//}
+LRESULT Label::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+{
+	switch (msg)
+	{
+	case WM_COMMAND:
+		LOG("create");
+		break;
+	case WM_DRAWITEM:
+	{
+		//if(wp == 2)
+		//	LOG("static draw");
+		break;
+	}
+	}
+	return LocalDefWndProc(hwnd, msg, wp, lp);
+}

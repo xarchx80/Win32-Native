@@ -11,9 +11,6 @@ int Application::GetCommonContorlVersion() const
 	HMODULE ctrl_lib = LoadLibrary("COMCTL32.DLL");
 	if (!ctrl_lib)
 		return 0;
-
-
-
 	return 0;
 }
 

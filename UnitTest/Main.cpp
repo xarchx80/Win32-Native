@@ -55,7 +55,7 @@ int main(int args, char* argv[])
 		WS_CHILD | WS_VISIBLE  | SBARS_TOOLTIPS,
 		0, 0, 400, 100, hwnd, NULL, hInstance, NULL);
 
-	int parts_width[3] = { 200,300 ,-1}; //"-1" end of array is fill remaining width
+	int parts_width[3] = { 100,100 ,-1}; //"-1" end of array is fill remaining width
 	int parts_num = sizeof(parts_width) / sizeof(int);
 
 	const char* tip = { "hello" };
@@ -146,7 +146,8 @@ LRESULT CALLBACK StatusWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			//remove defualt border & scpacing
 			rc.top -= border.y;
 			rc.left -= border.spacing;
-			FillRect(dc, &rc, custom.sbBr);
+			//FillRect(dc, &rc, custom.sbBr);
+			Rectangle(dc, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top);
 			//retore rect
 			rc.top += border.y;
 			rc.left += border.spacing;

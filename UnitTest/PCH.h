@@ -21,6 +21,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unordered_map>
 
 #define SAFE_DELETE_GDIOBJ(x)	if(x) { ::DeleteObject(x); x = NULL;}
 #define SAFE_DELETE_WND(x)		if(x) { ::DestroyWindow(x); x = NULL;}

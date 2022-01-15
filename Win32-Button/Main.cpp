@@ -15,19 +15,9 @@ int main(int args, char* argv[])
 	window.Create();
 	window.Show();
 
-	Control button(&window, 50, 50, 300, 100, "Button1");
-	button.lpClass = "Button";
-	button.style = WS_VISIBLE | BS_PUSHBUTTON;
-	button.Create();
 
-	Control status(&window, 100, -200, 100, 10, "status");
-	status.lpClass = STATUSCLASSNAME;
-	status.style = WS_VISIBLE | WS_BORDER;
-	status.Create();
 
 	Label label(&window, 320, 100, 200, 200, "About Label");
-
-	//Log::log_message("hello");
 	
 	
 	return app.Exec();

@@ -11,6 +11,7 @@ public:
 
 	void DrawRect(const RECT &rc, HBRUSH br);
 	void DrawRectangle(const RECT &rc);
+	void DrawCode(LPCSTR code, LPRECT rc, UINT flag);
 	HGDIOBJ SetObject(HGDIOBJ obj);
 	
 	HDC dc = nullptr;

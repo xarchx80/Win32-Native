@@ -4,60 +4,72 @@
 SubClassControl::SubClassControl(Wnd* parent)
 	: Wnd(parent)
 {
-	m_IsSubClass = true;
+	mIsSubClass = true;
 }
 
 SubClassControl::SubClassControl(Wnd* parent, int x, int y, int w, int h, const char* text)
 	: Wnd(parent, x, y, w, h, text)
 {
-	m_IsSubClass = true;
+	mIsSubClass = true;
 }
 
 SubClassControl::~SubClassControl()
 {
+	RemoveWindowSubclass(mHwnd, SubClassControl::SubClassWndProc, NULL);
 }
 
 bool SubClassControl::Create()
 {
 	if (!Wnd::Create())
 		return false;
-	is_control = true;
-	SetWindowLongPtr(m_hwnd, GWL_USERDATA, (LONG)this);
-	SetWindowSubclass(m_hwnd, SubClassControl::SubClassWndProc, (UINT_PTR)this, (DWORD_PTR)this);
+	mIsControl = true;
+	//SetWindowLongPtr(mHwnd, GWL_USERDATA, (LONG)this);
+	SetWindowSubclass(mHwnd, SubClassControl::SubClassWndProc, (UINT_PTR)this, (DWORD_PTR)this);
+	SetWindowLongPtr(mHwnd, GWL_USERDATA, (LONG)this);
 	return true;
 }
 
+LRESULT SubClassControl::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+{
+	return Wnd::LocalWndProc(hwnd, msg, wp, lp);
+}
 
+LRESULT SubClassControl::LocalDefWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+{
+	return DefSubclassProc(hwnd, msg, wp, lp);
+}
 
 LRESULT SubClassControl::SubClassWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, UINT_PTR id, DWORD_PTR data)
 {
-	SubClassControl* control = (SubClassControl*)data;
+	SubClassControl* wnd = (SubClassControl*)data;
 
-	if (control) {
-		return Wnd::GlobalWndProc(hwnd, msg, wp, lp);
+	if (wnd) {
+		//return Wnd::GlobalWndProc(hwnd, msg, wp, lp);
+		//LOG("sub class");
+		return wnd->LocalWndProc(hwnd, msg, wp, lp);
 	}
 
 	return DefSubclassProc(hwnd, msg, wp, lp);
 }
 
-std::vector<std::string> SuperClassControl::m_registeredSuperClasses{};
+std::vector<std::string> SuperClassControl::mRegistedSuperClasses{};
 
 SuperClassControl::SuperClassControl(Wnd* parent)
 	: Wnd(parent)
 {
-	m_IsSupperClass = true;
+	mIsSupperClass = true;
 }
 
 SuperClassControl::SuperClassControl(Wnd* parent, int x, int y, int w, int h, const char* text)
 	: Wnd(parent, x, y, w, h, text)
 {
-	m_IsSupperClass = true;
+	mIsSupperClass = true;
 }
 #include <algorithm>
 bool SuperClassControl::SetSuperClass(LPCSTR src, LPCSTR dest)
 {
-	//if (std::find(m_registeredSuperClasses.begin(), m_registeredSuperClasses.end(),
-	//	dest) != m_registeredSuperClasses.end())
+	//if (std::find(mRegistedSuperClasses.begin(), mRegistedSuperClasses.end(),
+	//	dest) != mRegistedSuperClasses.end())
 	//{
 	//	LOG("has already");
 	//	
@@ -68,8 +80,8 @@ bool SuperClassControl::SetSuperClass(LPCSTR src, LPCSTR dest)
 		LOG("warnning there is no %s builtin class", src);
 	}
 	
-	m_preWndProc = wc.lpfnWndProc;
-	m_PreCBWndExtra = wc.cbWndExtra;
+	mPreWndProc = wc.lpfnWndProc;
+	mPreCBWndExtra = wc.cbWndExtra;
 
 	wc.lpszClassName = dest;
 	wc.style &= ~CS_GLOBALCLASS;
@@ -81,7 +93,7 @@ bool SuperClassControl::SetSuperClass(LPCSTR src, LPCSTR dest)
 
 	bool bRegisted = RegisterClassEx(&wc);
 	if (bRegisted) {
-		m_registeredSuperClasses.emplace_back(wc.lpszClassName);
+		mRegistedSuperClasses.emplace_back(wc.lpszClassName);
 	}
 	
 	return true;
@@ -89,12 +101,12 @@ bool SuperClassControl::SetSuperClass(LPCSTR src, LPCSTR dest)
 
 WNDPROC SuperClassControl::GetPreWndProc() const
 {
-	return m_preWndProc;
+	return mPreWndProc;
 }
 
 LRESULT SuperClassControl::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
-	assert(m_preWndProc);
+	assert(mPreWndProc);
 	switch (msg)
 	{
 	case WM_COMMAND:
@@ -103,7 +115,12 @@ LRESULT SuperClassControl::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 	}
 	break;
 	}
-	return CallWindowProc(m_preWndProc, hwnd, msg, wp, lp);
+	return LocalDefWndProc(hwnd, msg, wp, lp);
+}
+
+LRESULT SuperClassControl::LocalDefWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+{
+	return CallWindowProc(mPreWndProc, hwnd, msg, wp, lp);
 }
 
 LRESULT SuperClassControl::SuperClassWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)

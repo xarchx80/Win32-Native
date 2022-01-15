@@ -2,59 +2,58 @@
 #include <Wnd.h>
 #include <Control.h>
 #include <Application.h>
-#include <StatusBar.h>
-#include <TabControl.h>
+#include <IStatusBar.h>
+#include <ITabControl.h>
 #include <IButton.h>
-
+#include <ILineEdit.h>
+#include <CBTHook.h>
 
 int main(int args, char* argv[])
 {
 	Application app;
 
 	Wnd window(nullptr, 700, 200, 700, 400,"main window");
-	window.hbrBkgorund = CreateSolidBrush(RGB(35, 40, 44));
+	window.mBkBrush = CreateSolidBrush(RGB(35, 40, 44));
 	window.Create();
 	window.Show();
 
-	//SuperClassControl button(&window, 50, 50, 200, 80, "Button1");
-	//button.lpClass = "Button";
-	//button.lpSuperClass = "Button_Ex";
-	//button.style = WS_VISIBLE | BS_PUSHBUTTON;
-	//button.Create();
+	
 
-	SubClassControl button1(&window, 250, 50, 200, 80, "Button1");
+	SubClassControl button1(nullptr, 250, 50, 200, 80, "Button1");
 	button1.lpClass = "Button";
 	button1.lpSuperClass = "Button_Ex";
 	button1.style = WS_VISIBLE ;
 	button1.Create();
 
+	ILineEdit edit(nullptr, 0, 0, 100, 200, "edit");
+
 	IButton b(nullptr,"long button");
 	
 	RECT rc;
-	TabControl tab(&window);
-	Wnd* parent = tab.m_parent;
-	GetClientRect(parent->m_hwnd, &rc);
+	ITabControl tab(&window);
+	Wnd* parent = tab.mParent;
+	GetClientRect(parent->mHwnd, &rc);
 	rc.bottom -= 28;
-	SetWindowPos(tab.m_hwnd, NULL, 0, 0, rc.right - rc.left, rc.bottom - rc.top, NULL);
-
-	auto a = SuperClassControl::m_registeredSuperClasses;
-
+	SetWindowPos(tab.mHwnd, NULL, 0, 0, rc.right - rc.left, rc.bottom - rc.top, NULL);
 	
-	std::vector<TabItem> tItems = {
-		{nullptr, "Zero"},
-		{ nullptr, "One"},
-		{ &b, b.GetText()}
-	};
-	tab.SetItems(tItems);
-	//Control status(&window, 100, -200, 100, 10, "status");
-	//status.lpClass = STATUSCLASSNAME;
-	//status.style = WS_VISIBLE | WS_BORDER |CCS_BOTTOM;
-	//status.Create();
-	StatusBar s(&window);
-
+	//std::vector<TabItem> tItems = {
+	//	{ &button1, button1.GetText()},
+	//	{ &edit, edit.GetText()}
+	//};
+	TabItem item{ nullptr, "null" };
+	TabItem item1{ &edit, edit.GetText() };
+	TabItem btnTabItem{ &button1, button1.GetText() };
 	
-	//Log::log_message("hello");
-	//throw std::runtime_error("vaild");
+	//tab.SetItems(tItems);
+	tab.InsertItem(item);
+	tab.InsertItem(item1);
+	//tab.InsertItem(btnTabItem);
+
+	IStatusBar s(&window);
+
+	for (auto a : SuperClassControl::mRegistedSuperClasses) {
+		LOG("%s __" ,a.c_str());
+	}
 	
 	return app.Exec();
 }

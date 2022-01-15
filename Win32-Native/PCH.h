@@ -4,7 +4,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define _CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
-
+#include <windowsx.h>
 #pragma comment(linker, "\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -41,6 +41,9 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define FORCEINLINE inline
 #endif
 
+//user defined
+#define WC_TABCONTROL_SUPER "WC_TABCONTROL_SUPER"
+
 typedef TCHAR tchar;
 
 #include <Painter.h>
@@ -70,7 +73,7 @@ namespace Log
 
 struct Event
 {
-	//HWND hwnd;
+	HWND hwnd;
 	UINT msg;
 	WPARAM wp;
 	LPARAM lp;

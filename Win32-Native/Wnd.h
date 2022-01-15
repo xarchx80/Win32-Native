@@ -1,5 +1,16 @@
 #pragma once
 
+struct WndCreateStruct
+{
+	LPCSTR lpText;
+	LPCSTR lpClass;
+	LPCSTR lpSuperClass;
+	DWORD style;
+	DWORD styleEx;
+	int x, y, cx, cy;
+	HBRUSH hbrBkgrnd;
+	HBRUSH hFont;
+};
 
 class Wnd
 {
@@ -11,14 +22,17 @@ public:
 	virtual bool Create();
 	void Show();
 	const char* GetText() const;
-	virtual LRESULT NotifyEvent(Event &e);
-	virtual LRESULT NotifyReflectEvent(Event &e);
-	virtual LRESULT PaintEvent(Painter &p);
-	virtual void OnResize(SizeEvent &e);
-	virtual LRESULT DrawItemEvent(DRAWITEMSTRUCT* dis);
-	virtual LRESULT EraseBkgndEvent(Event &e);
+	virtual LRESULT OnNotify(Event &e);
+	virtual LRESULT OnNotifyReflect(Event &e);
+	virtual LRESULT OnPaint(Painter &p);
+	virtual void	OnResize(int w, int h);
+	virtual LRESULT OnDrawItem(DRAWITEMSTRUCT* dis);
+	virtual LRESULT OnEraseBkgnd(Event &e);
+	virtual LRESULT OnCtrlColor(Event& e);
 	virtual LRESULT LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	virtual LRESULT LocalDefWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 	static LRESULT WINAPI GlobalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	
 
 
 	virtual bool SetSuperClass(LPCSTR src, LPCSTR dest);
@@ -38,24 +52,31 @@ public:
 	void SetGeometry(const RECT& rc);
 	void SetGeometry(const RECT& rc, HWND zorder, UINT flag);
 
+	void SetFont(HFONT font);
+	HFONT GetFont() const;
+	void SetBkBrush(HBRUSH br);
+	HBRUSH GetBkBrush() const;
+
 	bool SetParent(HWND parent);
-	Wnd* m_parent;
-	HWND m_hwnd;
+	Wnd* mParent;
+	HWND mHwnd;
 	std::string lpClass;
 	std::string lpText;
 	std::string lpSuperClass;
 	DWORD style;
 	DWORD styleEx;
 	UINT id = 0;
+	HFONT mFont;
 	//static WNDPROC mPreWndProc;
 	struct {
 		int x, y, cx, cy;
 	}geo;
-	bool is_control = false;
-	bool is_control_paint_event_enable = false;
-	bool m_IsSupperClass = false;
-	bool m_IsSubClass = false;
+	bool mIsControl = false;
+	bool mIsSupperClass = false;
+	bool mIsSubClass = false;
+	bool mIsPaintEventEnable = false;
 	bool bPaintEnable;
-	HBRUSH hbrBkgorund = nullptr;
+	HBRUSH mBkBrush = nullptr;
+	
 };
 

@@ -11,7 +11,8 @@ public:
 
 	virtual bool Create() override;
 
-	//virtual LRESULT LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	virtual LRESULT LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	LRESULT LocalDefWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
 	static LRESULT WINAPI SubClassWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp,
 		UINT_PTR id, DWORD_PTR data);
 };
@@ -25,9 +26,10 @@ public:
 	
 	virtual bool SetSuperClass(LPCSTR src, LPCSTR dest) override;
 	WNDPROC GetPreWndProc() const;
-	int m_PreCBWndExtra = 0;
-	WNDPROC m_preWndProc = nullptr;
-	static std::vector<std::string> m_registeredSuperClasses;
+	int mPreCBWndExtra = 0;
+	WNDPROC mPreWndProc = nullptr;
+	static std::vector<std::string> mRegistedSuperClasses;
 	virtual LRESULT LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
+	LRESULT LocalDefWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) override;
 	static LRESULT WINAPI SuperClassWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 };

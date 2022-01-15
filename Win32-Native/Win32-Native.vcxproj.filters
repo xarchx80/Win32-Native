@@ -8,6 +8,9 @@
     <Filter Include="Gui">
       <UniqueIdentifier>{8f468910-2a9f-4ed1-b29b-58f1bdcf4a87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Hook">
+      <UniqueIdentifier>{cea9d304-a8dd-43b9-b306-d75ec1e4bd7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Wnd.h">
@@ -25,14 +28,23 @@
     <ClInclude Include="Painter.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="StatusBar.h">
-      <Filter>Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="TabControl.h">
-      <Filter>Gui</Filter>
-    </ClInclude>
     <ClInclude Include="IButton.h">
       <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="ILineEdit.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="ITabControl.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="IStatusBar.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="CBTHook.h">
+      <Filter>Hook</Filter>
+    </ClInclude>
+    <ClInclude Include="WndCache.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -54,14 +66,23 @@
     <ClCompile Include="Painter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StatusBar.cpp">
-      <Filter>Gui</Filter>
-    </ClCompile>
-    <ClCompile Include="TabControl.cpp">
-      <Filter>Gui</Filter>
-    </ClCompile>
     <ClCompile Include="IButton.cpp">
       <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="ILineEdit.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="ITabControl.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="IStatusBar.cpp">
+      <Filter>Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="CBTHook.cpp">
+      <Filter>Hook</Filter>
+    </ClCompile>
+    <ClCompile Include="WndCache.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -4,21 +4,36 @@
 //WNDPROC Wnd::mPreWndProc = nullptr;
 
 Wnd::Wnd(Wnd* parent)
-	: m_parent(parent), geo{ 0 }, lpClass("Wnd32"), lpText("Wnd32"), style(WS_VISIBLE), styleEx(NULL)
+	: mParent(parent), 
+	geo{ 0 },
+	lpClass("Wnd32"),
+	lpText("Wnd32"), 
+	style(WS_VISIBLE), 
+	styleEx(NULL),
+	mFont(nullptr),
+	mBkBrush(nullptr)
 {
 	
 }
 
 Wnd::Wnd(Wnd* parent, int x, int y, int w, int h, const TCHAR* text)
-	: m_parent(parent), geo{ x, y, w, h }, lpClass("Wnd32"), lpText(text), style(WS_VISIBLE), styleEx(NULL)
+	: mParent(parent), 
+	geo{ x, y, w, h }, 
+	lpClass("Wnd32"), 
+	lpText(text), 
+	style(WS_VISIBLE), 
+	styleEx(NULL),
+	mFont(nullptr),
+	mBkBrush(nullptr)
 {
 
 }
 
 Wnd::~Wnd()
 {
-	SAFE_DELETE_GDIOBJ(hbrBkgorund);
-	SAFE_DELETE_WND(m_hwnd);
+	SAFE_DELETE_GDIOBJ(mBkBrush);
+	SAFE_DELETE_GDIOBJ(mFont);
+	SAFE_DELETE_WND(mHwnd);
 }
 
 
@@ -27,7 +42,7 @@ bool Wnd::Create()
 {
 	WNDCLASSEX wc{};
 	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.hbrBackground = hbrBkgorund ?  hbrBkgorund :(HBRUSH)GetStockObject(GRAY_BRUSH);
+	wc.hbrBackground = mBkBrush ?  mBkBrush :(HBRUSH)GetStockObject(GRAY_BRUSH);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hInstance = GetModuleHandle(NULL);
 	wc.lpszClassName = lpClass.c_str();
@@ -36,7 +51,7 @@ bool Wnd::Create()
 
 	bool exist = GetClassInfoEx(wc.hInstance, wc.lpszClassName, &wc);
 	if (exist) {
-		if (m_IsSupperClass) {
+		if (mIsSupperClass) {
 			assert(!lpSuperClass.empty());
 			SetSuperClass(wc.lpszClassName, lpSuperClass.c_str());
 			//lpClass = lpSuperClass;
@@ -48,9 +63,9 @@ bool Wnd::Create()
 	}
 
 	HWND parent_hwnd = nullptr;
-	if (m_parent) {
-		if (m_parent->m_hwnd)
-			parent_hwnd = m_parent->m_hwnd;
+	if (mParent) {
+		if (mParent->mHwnd)
+			parent_hwnd = mParent->mHwnd;
 	}
 
 	if (parent_hwnd) {
@@ -59,15 +74,15 @@ bool Wnd::Create()
 		style &= ~WS_CHILD; style |= WS_POPUP;
 	}
 
-	m_hwnd = CreateWindowEx(
+	mHwnd = CreateWindowEx(
 		styleEx,
-		m_IsSupperClass ? lpSuperClass.c_str() : lpClass.c_str(),
+		mIsSupperClass ? lpSuperClass.c_str() : lpClass.c_str(),
 		lpText.c_str(),
 		style,
 		geo.x, geo.y, geo.cx, geo.cy,
 		parent_hwnd, (HMENU)id, wc.hInstance, this);
 
-	if (!m_hwnd) {
+	if (!mHwnd) {
 		return false;
 	}
 	return true;
@@ -75,7 +90,7 @@ bool Wnd::Create()
 
 void Wnd::Show()
 {
-	ShowWindow(m_hwnd, TRUE);
+	ShowWindow(mHwnd, TRUE);
 }
 
 const char* Wnd::GetText() const
@@ -83,45 +98,55 @@ const char* Wnd::GetText() const
 	return lpText.c_str();
 }
 
-LRESULT Wnd::NotifyEvent(Event & e)
+LRESULT Wnd::OnNotify(Event & e)
 {
 	return FALSE;
 }
 
-LRESULT Wnd::NotifyReflectEvent(Event & e)
+LRESULT Wnd::OnNotifyReflect(Event & e)
 {
 	return FALSE;
 }
 
-LRESULT Wnd::PaintEvent(Painter &p)
+LRESULT Wnd::OnPaint(Painter &p)
 {
 	return FALSE;
 }
 
-void Wnd::OnResize(SizeEvent& e)
+void Wnd::OnResize(int w, int h)
 {
-	_CRT_UNUSED(e);
+	_CRT_UNUSED(w); 
+	_CRT_UNUSED(h);
 }
 
-LRESULT Wnd::DrawItemEvent(DRAWITEMSTRUCT* dis)
+LRESULT Wnd::OnDrawItem(DRAWITEMSTRUCT* dis)
 {
 	return FALSE;
 }
 
-LRESULT Wnd::EraseBkgndEvent(Event &e)
+LRESULT Wnd::OnEraseBkgnd(Event &e)
+{
+	return FALSE;
+}
+
+LRESULT Wnd::OnCtrlColor(Event & e)
 {
 	return FALSE;
 }
 
 LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
-	Event evt{ msg, wp, lp };
+	Event evt{ hwnd, msg, wp, lp };
+	LRESULT res = FALSE;
 	switch (msg)
 	{
 	case WM_SIZE:
-		//LOG("%s sizing", GetText());
+	{
+		int w = LOWORD(lp);
+		int h = HIWORD(lp);
+		OnResize(w, h);
 		break;
-
+	}
 	case WM_RBUTTONUP:
 		//LOG("%s button", GetText());
 		break;
@@ -141,13 +166,12 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		//LOG("%s notify", GetText());
 		HWND child_hwnd = ((LPNMHDR)lp)->hwndFrom;
 		Wnd* child = (Wnd*)GetWindowLongPtr(child_hwnd, GWL_USERDATA);
-		BOOL res = FALSE;
 		if (child) {
 			//LOG("%s notify", child->GetText());
-			res = child->NotifyReflectEvent(evt);
+			res = child->OnNotifyReflect(evt);
 			if (res) return res;
 		}
-		res = NotifyEvent(evt);
+		res = OnNotify(evt);
 		if (res) return res;
 		break;
 	}
@@ -161,7 +185,7 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		LPDRAWITEMSTRUCT dis = (LPDRAWITEMSTRUCT)lp;
 		Wnd* child = (Wnd*)GetWindowLongPtr(dis->hwndItem, GWL_USERDATA);
 		if (child) {
-			if (child->DrawItemEvent(dis))
+			if (child->OnDrawItem(dis))
 				return TRUE;
 		}
 		break;
@@ -174,11 +198,11 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	break;
 	case WM_PAINT:
 	{
-		if (is_control && !is_control_paint_event_enable)
+		if(!mIsPaintEventEnable)
 			break;
 		LOG("%s paint", GetText());
 		Painter p(hwnd);
-		if (PaintEvent(p))
+		if (OnPaint(p))
 			return 0;
 		break;
 	}
@@ -186,7 +210,7 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_ERASEBKGND:
 	{
 		//LOG("%s erase", GetText());
-		if (EraseBkgndEvent(evt))
+		if (OnEraseBkgnd(evt))
 			return TRUE;
 		return FALSE;
 	}
@@ -194,12 +218,25 @@ LRESULT Wnd::LocalWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_NCPAINT:
 		//LOG("%s NCPAINT", GetText());
 	break;
+	case WM_CTLCOLOR:
+	{
+		res = OnCtrlColor(evt);
+		if (res) return res;
+		break;
 	}
-	//return 0;
+	case WM_CTLCOLORBTN:
+	{
+		res = OnCtrlColor(evt);
+		if (res) return res;
+		break;
+	}
 
-	if (is_control) {
-		return DefSubclassProc(hwnd, msg, wp, lp);
 	}
+	return LocalDefWndProc(hwnd, msg, wp, lp);
+}
+
+LRESULT Wnd::LocalDefWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+{
 	return DefWindowProc(hwnd, msg, wp, lp);
 }
 
@@ -277,24 +314,44 @@ void Wnd::SetWindowName(LPCSTR name)
 
 void Wnd::Hide()
 {
-	assert(m_hwnd);
-	ShowWindow(m_hwnd, SW_HIDE);
+	assert(mHwnd);
+	ShowWindow(mHwnd, SW_HIDE);
 }
 
 void Wnd::SetGeometry(const RECT & rc)
 {
-	::SetWindowPos(m_hwnd, NULL, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
+	::SetWindowPos(mHwnd, NULL, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
 		SWP_NOZORDER);
 }
 
 void Wnd::SetGeometry(const RECT & rc, HWND zorder, UINT flag)
 {
-	::SetWindowPos(m_hwnd, zorder, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
+	::SetWindowPos(mHwnd, zorder, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
 		flag);
+}
+
+void Wnd::SetFont(HFONT font)
+{
+	mFont = font;
+}
+
+HFONT Wnd::GetFont() const
+{
+	return mFont;
+}
+
+void Wnd::SetBkBrush(HBRUSH br)
+{
+	mBkBrush;
+}
+
+HBRUSH Wnd::GetBkBrush() const
+{
+	return mBkBrush ? mBkBrush : GetStockBrush(NULL_BRUSH);
 }
 
 bool Wnd::SetParent(HWND parent)
 {
-	return ::SetParent(m_hwnd, parent);
+	return ::SetParent(mHwnd, parent);
 }
 
